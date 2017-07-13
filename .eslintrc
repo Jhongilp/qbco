@@ -1,0 +1,26 @@
+{
+    "env": {
+        "es6": true,
+        "browser": true,
+        "node": true
+    },
+    "extends": "airbnb",
+    "rules": {
+        "no-console": 1,
+        "radix": ["error", "as-needed"],
+        "no-tabs": 0,
+        "func-names": ["error", "as-needed"],
+        "import/no-extraneous-dependencies": 0,
+        "import/no-unresolved": 0,
+        "import/extensions": 0,
+        "no-prototype-builtins": 0,
+        "no-mixed-spaces-and-tabs": 0,
+        "eol-last": 0,
+        "no-param-reassign": 0,
+        "guard-for-in": 0,
+        "no-restricted-syntax": 0
+    },
+    "parserOptions": {
+        "sourceType": "module"
+    }
+}
