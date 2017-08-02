@@ -1,6 +1,7 @@
 import { _HTML } from '_HTML';
 import { Menu } from 'Menu';
 import { Qbco } from 'Qbco';
+import { productModule} from 'Product';
 import { Bar } from 'Bar';
 
 const UpperBar = Bar('upperbar');
@@ -16,19 +17,14 @@ function loadContentSection(id) {
 }
 
 function loadModules() {
-  loadContentSection('content');
-  const tabsActivedModules = []; 
+  const tabsActivedModules = [];
   
   const dashboard = {
     Qbco() {
       Qbco('module');
-      
     },
     Productos() {
-      const moduleDiv = document.createElement('div');
-      moduleDiv.setAttribute('id', 'productos-module');
-      moduleDiv.innerHTML = "<h1>Productos Module</h1>";
-      _HTML.append(moduleDiv, 'module')
+      productModule('module');
     },
     Domex() {
       const moduleDiv = document.createElement('div');
@@ -42,12 +38,13 @@ function loadModules() {
     const moduleName = nodeElement.tabIndex === 0 ? nodeElement.textContent.trim() : nodeElement.dataset.modulename.trim();
     const moduleNoActiveAlready = tabsActivedModules.indexOf(moduleName) === -1 ? true : false;
     if (moduleNoActiveAlready && moduleName != 'ShowList') {
-      UpperBar.newTab( moduleName );
       tabsActivedModules.push(moduleName);
+      UpperBar.newTab( tabsActivedModules, moduleName );
       dashboard[moduleName]();
+      UpperBar.displayModule(tabsActivedModules, moduleName);
     }
     else if (!moduleNoActiveAlready) {
-      UpperBar.showOrHideModule(moduleName);
+      UpperBar.displayModule(tabsActivedModules, moduleName);
     }
   }
   
@@ -59,11 +56,11 @@ function loadModules() {
   });
 }
 
+
+
 window.onload = function inicio() {
   // Set the location as parameter
   Menu('app');
+  loadContentSection('content');
   loadModules();
 };
-
-
-

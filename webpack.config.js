@@ -16,6 +16,7 @@ module.exports = {
             Calcular: path.resolve(__dirname, 'app/components/calcular.js'),
             Menu: path.resolve(__dirname, 'app/components/Menu.js'),
             Qbco: path.resolve(__dirname, 'app/components/Qbco.js'),
+            Product: path.resolve(__dirname, 'app/components/Products.js'),
             Bar: path.resolve(__dirname, 'app/components/Bar.js')
         }
     },

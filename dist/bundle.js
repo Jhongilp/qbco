@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -162,7 +162,7 @@ const inventory = {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ingresarItem; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_Inventario__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__HTML__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_Calcular__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_Calcular__ = __webpack_require__(7);
 
 
 
@@ -345,19 +345,27 @@ function Bar(id) {
   ul.setAttribute('class', 'upper-menu');
   bar.appendChild(ul);
 
-  function showOrHideModule(moduleName) {
-    const idModule = `${moduleName.toLowerCase()}-module`;
-    const module = document.getElementById(idModule);
-    const displayMode = window.getComputedStyle(module, null).getPropertyValue("display");
-    displayMode === 'none' ? module.style.display = 'flex' : module.style.display = 'none';
+  function displayModule(modules, selectedModule) {
+    const menutabs = Array.from(document.querySelectorAll('.upper-menu li'));
+    menutabs.map(li => {
+      const tab = li.dataset.module;
+      tab === selectedModule.toLowerCase() ? li.classList.add('selected') : li.classList.remove('selected');
+    });
+
+    modules.forEach(function (moduleName) {
+      const idModule = `${moduleName.toLowerCase()}-module`;
+      const module = document.getElementById(idModule);
+      moduleName === selectedModule ? module.style.display = 'flex' : module.style.display = 'none';
+    });
   }
 
-  function addTab(name) {
+  function addTab(arr, name) {
     const li = document.createElement('li');
+    li.setAttribute('data-module', name.toLocaleLowerCase());
     const desc = document.createTextNode(name);
     li.appendChild(desc);
     li.addEventListener('click', function () {
-      showOrHideModule(name);
+      displayModule(arr, name);
     });
     ul.appendChild(li);
   }
@@ -366,11 +374,11 @@ function Bar(id) {
     insert() {
       return bar;
     },
-    newTab(desc) {
-      addTab(desc);
+    newTab(arr, moduleName) {
+      addTab(arr, moduleName);
     },
-    showOrHideModule(name) {
-      showOrHideModule(name);
+    displayModule(arr, module) {
+      displayModule(arr, module);
     }
   };
 }
@@ -425,6 +433,194 @@ function Menu(location) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = productModule;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__HTML__ = __webpack_require__(0);
+
+
+function lunchFirebase() {
+  var config = {
+    apiKey: "AIzaSyBB-mhYGsm-1iF2Ksv2Y2wnAktGU0Fh-0I",
+    authDomain: "qbco-8373d.firebaseapp.com",
+    databaseURL: "https://qbco-8373d.firebaseio.com",
+    projectId: "qbco-8373d",
+    storageBucket: "qbco-8373d.appspot.com",
+    messagingSenderId: "568598711654"
+  };
+  firebase.initializeApp(config);
+  var database = firebase.database();
+  var ref = database.ref('inventario');
+  return {
+    createItem(item) {
+      ref.push(item);
+    }
+  };
+}
+
+// Initialize Firebase
+const inventarioDB = lunchFirebase();
+
+function ProductForm() {
+  const inventarioFields = {
+    'Cod': true,
+    'Description': true,
+    'Cantidad': true,
+    'Precio U': true,
+    'Empaque': false,
+    'Moneda': false,
+    'Unidades x Empaque': true,
+    'Unidad de carga': false,
+    'Campo 1': false
+  };
+
+  return {
+    getFields() {
+      return inventarioFields;
+    },
+    updateFields(columnName, value) {
+      inventarioFields[columnName] = value;
+    }
+  };
+}
+
+const view = {
+  init: function init(id) {
+    const module = document.getElementById(id);
+    const productModule = document.createElement('div');
+    productModule.innerHTML = `<div id="productos-module">
+        <div> 
+          <ul class="product-upper-submenu">
+            <li>Ingresar</li>
+            <li>Editar</li>
+            <li>Empaques</li>
+          </ul>
+        </div>
+        <div id="product-lower-section">
+          <div id="product-content">
+            <div id="open-hidden-box">
+              <ul><li> Columns </li></ul>
+            </div>
+            <div id="productInputSection"> </div>
+            <div id="box-product-columns" class="column-box hidden-box">
+            </div>
+          </div>
+        </div>
+      </div>`;
+    module.appendChild(productModule);
+  },
+
+  inputSection: function inputSection(fields) {
+    const headerContent = document.getElementById('productInputSection');
+    for (var i = 0; i < 2; i++) {
+      let row = document.createElement('div');
+      row.setAttribute('class', 'row-product');
+      let cells = "";
+      for (const header in fields) {
+        if (fields[header]) {
+          // First the header (0), then (1) the input fields
+          const prop = header.split(' ').join('').toLowerCase();
+          if (i === 0) cells += `<div class="cell-product">${header}</div>`;else cells += `<input data-prop=${prop} class='cell-product'>`;
+        }
+      }
+      row.innerHTML = cells;
+      const button = document.createElement('button');
+      button.setAttribute('id', 'create-product');
+      i === 1 ? row.appendChild(button) : null;
+      headerContent.appendChild(row);
+    }
+  },
+
+  hiddenColumnBox: function hiddenColumnBox(fieldColumns) {
+    const divColumnBox = document.getElementById('box-product-columns');
+    function fieldSet(objList) {
+      const listArray = Object.keys(objList);
+      return `<fieldset class='box-checklist'>
+        <legend>Escoger campos:</legend>
+          ${listArray.map(columnName => {
+        return `<div>
+                      <input 
+                        type="checkbox" 
+                        name="column-option" 
+                        value=${columnName} 
+                        ${objList[columnName] ? 'checked' : null}>
+                      <label>${columnName}</label>
+                    </div>`;
+      }).join('')}
+        </fieldset>`;
+    }
+
+    const innerDiv = `${fieldSet(fieldColumns)}
+                      <div>
+                        <div> Hecho </div> 
+                        <div> Restablecer </div>
+                      </div>`;
+
+    divColumnBox.innerHTML = innerDiv;
+  },
+
+  showColumnOptions: function () {
+    const liColumns = document.getElementById('open-hidden-box');
+    liColumns.addEventListener('click', function () {
+      const boxWithFieldList = document.getElementById('box-product-columns');
+      boxWithFieldList.classList.toggle('hidden-box');
+    });
+  },
+
+  update: function (form) {
+    const checkBoxState = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+    checkBoxState.forEach(function (col) {
+      col.addEventListener('click', function () {
+        const columnTitle = col.nextElementSibling.textContent;
+        form.updateFields(columnTitle, col.checked);
+        const menu = document.getElementById('productInputSection');
+        menu.innerHTML = '';
+        view.inputSection(form.getFields());
+        controller.onClickCreateBtn();
+      });
+    });
+  }
+  // End of view
+};
+
+const controller = {
+
+  init: function init(id) {
+    view.init(id);
+    controller.loadPage();
+  },
+
+  loadPage: function loadPage() {
+    const form = ProductForm();
+    view.inputSection(form.getFields());
+    view.hiddenColumnBox(form.getFields());
+    view.showColumnOptions();
+    view.update(form);
+  },
+
+  onClickCreateBtn: function () {
+    const createBtn = document.getElementById('create-product');
+    createBtn.addEventListener('click', function () {
+      const data = Array.from(document.querySelectorAll('#productInputSection input'));
+      const item = {};
+      data.map(col => {
+        const prop = col.dataset.prop;
+        const value = col.value;
+        item[prop] = value;
+      });
+      inventarioDB.createItem(item);
+    });
+  }
+  // End of controller
+};
+
+function productModule(indexLocation) {
+  controller.init(indexLocation);
+}
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = Qbco;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__HTML__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ResumenPedido__ = __webpack_require__(2);
@@ -463,13 +659,13 @@ function Qbco(location) {
 }
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return calcularPallets; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_Inventario__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_HandleOrder__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_HandleOrder__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__HTML__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ResumenPedido__ = __webpack_require__(2);
 
@@ -527,7 +723,7 @@ function calcularPallets() {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -595,21 +791,23 @@ function createItem(presentation) {
 }
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__HTML__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_Menu__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_Qbco__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_Bar__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_Qbco__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_Product__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_Bar__ = __webpack_require__(3);
 
 
 
 
 
-const UpperBar = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3_Bar__["a" /* Bar */])('upperbar');
+
+const UpperBar = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_Bar__["a" /* Bar */])('upperbar');
 
 function loadContentSection(id) {
   const content = document.createElement('div');
@@ -622,7 +820,6 @@ function loadContentSection(id) {
 }
 
 function loadModules() {
-  loadContentSection('content');
   const tabsActivedModules = [];
 
   const dashboard = {
@@ -630,10 +827,7 @@ function loadModules() {
       __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_Qbco__["a" /* Qbco */])('module');
     },
     Productos() {
-      const moduleDiv = document.createElement('div');
-      moduleDiv.setAttribute('id', 'productos-module');
-      moduleDiv.innerHTML = "<h1>Productos Module</h1>";
-      __WEBPACK_IMPORTED_MODULE_0__HTML__["a" /* _HTML */].append(moduleDiv, 'module');
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3_Product__["a" /* productModule */])('module');
     },
     Domex() {
       const moduleDiv = document.createElement('div');
@@ -647,11 +841,12 @@ function loadModules() {
     const moduleName = nodeElement.tabIndex === 0 ? nodeElement.textContent.trim() : nodeElement.dataset.modulename.trim();
     const moduleNoActiveAlready = tabsActivedModules.indexOf(moduleName) === -1 ? true : false;
     if (moduleNoActiveAlready && moduleName != 'ShowList') {
-      UpperBar.newTab(moduleName);
       tabsActivedModules.push(moduleName);
+      UpperBar.newTab(tabsActivedModules, moduleName);
       dashboard[moduleName]();
+      UpperBar.displayModule(tabsActivedModules, moduleName);
     } else if (!moduleNoActiveAlready) {
-      UpperBar.showOrHideModule(moduleName);
+      UpperBar.displayModule(tabsActivedModules, moduleName);
     }
   }
 
@@ -666,6 +861,7 @@ function loadModules() {
 window.onload = function inicio() {
   // Set the location as parameter
   __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_Menu__["a" /* Menu */])('app');
+  loadContentSection('content');
   loadModules();
 };
 

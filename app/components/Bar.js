@@ -7,19 +7,27 @@ export function Bar(id) {
   ul.setAttribute('class', 'upper-menu');
   bar.appendChild(ul);
   
-  function showOrHideModule(moduleName) {
-    const idModule = `${moduleName.toLowerCase()}-module`;
-    const module = document.getElementById(idModule);
-    const displayMode = window.getComputedStyle(module, null).getPropertyValue("display");
-    displayMode === 'none' ? module.style.display = 'flex' : module.style.display = 'none';
+  function displayModule(modules, selectedModule) {
+    const menutabs = Array.from(document.querySelectorAll('.upper-menu li'));
+    menutabs.map(li => {
+      const tab = li.dataset.module;
+      tab === selectedModule.toLowerCase() ? li.classList.add('selected') : li.classList.remove('selected');
+    });
+
+    modules.forEach(function(moduleName) {
+      const idModule = `${moduleName.toLowerCase()}-module`;
+      const module = document.getElementById(idModule);
+      moduleName === selectedModule ? module.style.display = 'flex' : module.style.display = 'none';
+    });
   }
   
-  function addTab(name) {
+  function addTab(arr, name) {
     const li = document.createElement('li');
+    li.setAttribute('data-module', name.toLocaleLowerCase());
     const desc = document.createTextNode(name);
     li.appendChild(desc);
     li.addEventListener('click', function() {
-      showOrHideModule(name);
+      displayModule(arr, name);
     });
     ul.appendChild(li);
   }
@@ -28,11 +36,11 @@ export function Bar(id) {
     insert() {
       return bar;
     },
-    newTab(desc) {
-      addTab(desc);
+    newTab(arr, moduleName) {
+      addTab(arr, moduleName);
     },
-    showOrHideModule(name) {
-      showOrHideModule(name);
+    displayModule(arr, module) {
+      displayModule(arr, module);
     }
   };
 }

@@ -1,0 +1,109 @@
+#productInputSection {
+  display: flex;
+  flex-direction: row;
+  width: 95%;
+}
+
+.row-product {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+#productInputSection button {
+  display: flex;
+  width: 60px;
+  height: 30px;
+  align-items: baseline; 
+}
+
+.column-box {
+  display: flex;
+  flex-direction: column;
+  /*border: 1px solid #eee;*/
+  width: 250px;
+  background-color: black;
+  opacity: 0.7;
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #fff;
+}
+
+.hidden-box {
+  display: none;
+}
+
+.box-checklist {
+  border: none;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.box-checklist div {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-left: 5px;
+}
+
+#open-hidden-box {
+  border-bottom: 1px solid #eee;
+  height: 40px;
+  width: 100%;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.product-upper-submenu {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0;
+  width: 100%;
+  border: 1px solid #eee;
+}
+
+.product-upper-submenu li {
+  display: flex;
+  width: 120px;
+  height: 30px;
+}
+
+#product-lower-section {
+  border: 1px solid #eee;
+  width: 100%;
+}
+
+/*++++++++++++++++++++++++++++
+	Media Queries
++++++++++++++++++++++++++++++++*/
+@media (min-width: 769px) {
+	#productInputSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+  }
+
+  .row-product {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  
+  .cell-product {
+    display: flex;
+    width: 140px;
+    justify-content: center;
+    margin-right: 3px;
+  }
+  
+}
+
+
+
