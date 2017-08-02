@@ -9,15 +9,15 @@ module.exports = {
     },
     resolve: {
         alias: {
-            Inventario: path.resolve(__dirname, 'app/components/inventario.js'),
-            HandleOrder: path.resolve(__dirname, 'app/components/handleOrder.js'),
-            _HTML: path.resolve(__dirname, 'app/components/_HTML.js'),
-            ResumenPedido: path.resolve(__dirname, 'app/components/resumenPedido.js'),
-            Calcular: path.resolve(__dirname, 'app/components/calcular.js'),
-            Menu: path.resolve(__dirname, 'app/components/Menu.js'),
-            Qbco: path.resolve(__dirname, 'app/components/Qbco.js'),
-            Product: path.resolve(__dirname, 'app/components/Products.js'),
-            Bar: path.resolve(__dirname, 'app/components/Bar.js')
+            Inventario: path.resolve(__dirname, 'app/components/main/inventario.js'),
+            HandleOrder: path.resolve(__dirname, 'app/components/qbco/handleOrder.js'),
+            _HTML: path.resolve(__dirname, 'app/components/main/_HTML.js'),
+            ResumenPedido: path.resolve(__dirname, 'app/components/qbco/resumenPedido.js'),
+            Calcular: path.resolve(__dirname, 'app/components/qbco/calcular.js'),
+            Menu: path.resolve(__dirname, 'app/components/main/Menu.js'),
+            Qbco: path.resolve(__dirname, 'app/components/qbco/Qbco.js'),
+            Product: path.resolve(__dirname, 'app/components/producto/Products.js'),
+            Bar: path.resolve(__dirname, 'app/components/main/Bar.js')
         }
     },
     module: {
