@@ -9,6 +9,8 @@ module.exports = {
     },
     resolve: {
         alias: {
+            // Main
+            Database: path.resolve(__dirname, 'app/components/main/database.js'),
             Inventario: path.resolve(__dirname, 'app/components/main/inventario.js'),
             HandleOrder: path.resolve(__dirname, 'app/components/qbco/handleOrder.js'),
             _HTML: path.resolve(__dirname, 'app/components/main/_HTML.js'),
@@ -17,6 +19,11 @@ module.exports = {
             Menu: path.resolve(__dirname, 'app/components/main/Menu.js'),
             Qbco: path.resolve(__dirname, 'app/components/qbco/Qbco.js'),
             Product: path.resolve(__dirname, 'app/components/producto/Products.js'),
+                SubmoduleConstructor: path.resolve(__dirname, 'app/components/producto/submoduleConstructor.js'),
+                InventarioForm: path.resolve(__dirname, 'app/components/producto/inventarioForm.js'),
+                SubProductIngresar: path.resolve(__dirname, 'app/components/producto/subProductIngresar.js'),
+                SubProductEditar: path.resolve(__dirname, 'app/components/producto/subProductEditar.js'),
+                SubProductEmpaques: path.resolve(__dirname, 'app/components/producto/subProductEmpaques.js'),
             Bar: path.resolve(__dirname, 'app/components/main/Bar.js')
         }
     },

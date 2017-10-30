@@ -1,3 +1,13 @@
+#productos-module {
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.product-wrapper {
+  width: 100%;
+}
+
+
 #productInputSection {
   display: flex;
   flex-direction: row;
@@ -14,9 +24,15 @@
 
 #productInputSection button {
   display: flex;
-  width: 60px;
+  min-width: 60px;
   height: 30px;
   align-items: baseline; 
+}
+
+#product-lower-section {
+  position: relative;
+  border: 1px solid #eee;
+  width: 100%;
 }
 
 .column-box {
@@ -59,24 +75,169 @@
   margin-bottom: 10px;
 }
 
+#open-hidden-box ul,
+#open-hidden-box ul li,
+#open-hidden-box ul li a{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#open-hidden-box ul li a {
+  width: 40px;
+}
+
 .product-upper-submenu {
   display: flex;
   justify-content: flex-start;
   padding: 0;
   width: 100%;
   border: 1px solid #eee;
+  margin: 0;
 }
 
 .product-upper-submenu li {
   display: flex;
-  width: 120px;
+  align-items: center;
+  /*width: 120px;*/
   height: 30px;
+  margin-right: 40px;
 }
 
-#product-lower-section {
+.product-upper-submenu a {
+  display: flex;
+  justify-content: flex-start;
+  /*width: 100%;*/
+  /*height: 100%;*/
+  align-items: center;
+  text-decoration: none;
+  transition: border-bottom .8s;
+}
+
+.product-upper-submenu a:active,
+.product-upper-submenu a:hover
+{
+  font-weight: bold;
+  color: black;
+}
+
+/*++++++++++++++++++++++++++++
+	Submodule ingresar
++++++++++++++++++++++++++++++++*/
+
+#open-hidden-box {
+  padding:10px;
+}
+/*++++++++++++++++++++++++++++
+	Submodule editar
++++++++++++++++++++++++++++++++*/
+
+
+/*manejoInventarioSubmodule*/
+
+#manejoInventarioSubmodule {
+  display: flex;
+  width: 100%;
+  min-height: 200px;
   border: 1px solid #eee;
+}
+
+#manejoInventarioContainer {
+  display: flex;
+  flex-direction: column;
   width: 100%;
 }
+
+.inventarioMainHandleForm {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  /*margin-bottom: 5px;*/
+  padding: 5px 3px 5px 3px;
+}
+
+.inventarioMainHandleForm input[type="search"] {
+  margin-right: 10px;
+}
+
+.inventarioMainHandleForm > div {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-right: 20px;
+}
+
+#delete-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20px;
+  /*width: 40px;*/
+  height: 100%;
+}
+
+#delete-icon i,
+#delete-icon a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+/*Resumen edit-submodule*/
+
+#editarSubmodule-resume-container {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 3px 5px 3px;
+}
+
+/*Rows*/
+.row-pr-sub-ed {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  height: 45px;
+}
+
+.cell-pr-sub-ed {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  align-items: center;
+  width: 10%;
+  border-bottom: 1px solid #eee;
+  border-left: 1px solid #eee;
+}
+
+#editarSubmodule-resume-container div:first-child div {
+  border-top: 1px solid #eee;
+  color: navy;
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+div[dataset="headerCellDescription"] {
+  flex-grow: 2;
+}
+
+
+.input-space {
+  display:flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 30px;
+}
+
+.input-space input {
+  width: 50%;
+  height: 50%;
+}
+
 
 /*++++++++++++++++++++++++++++
 	Media Queries
@@ -87,6 +248,7 @@
     flex-direction: column;
     justify-content: space-between;
     border-bottom: 1px solid #eee;
+    padding-left: 5px;
   }
 
   .row-product {

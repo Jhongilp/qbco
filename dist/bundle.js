@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 15);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -157,12 +157,147 @@ const inventory = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+
+class inventarioSubmodule {
+
+  constructor(submoduleObj, id) {
+    this.submoduleObj = submoduleObj;
+    this.submodule = document.createElement('div');
+    this.submodule.setAttribute('id', id);
+    this.submodule.appendChild(submoduleObj.init());
+  }
+
+  init() {
+    return this.submodule;
+  }
+
+  load() {
+    this.submoduleObj.loadPage();
+  }
+}
+/* harmony export (immutable) */ __webpack_exports__["a"] = inventarioSubmodule;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const DB = function DB() {
+
+  const config = {
+    apiKey: "AIzaSyBB-mhYGsm-1iF2Ksv2Y2wnAktGU0Fh-0I",
+    authDomain: "qbco-8373d.firebaseapp.com",
+    databaseURL: "https://qbco-8373d.firebaseio.com",
+    projectId: "qbco-8373d",
+    storageBucket: "qbco-8373d.appspot.com",
+    messagingSenderId: "568598711654"
+  };
+
+  firebase.initializeApp(config);
+  const database = firebase.database();
+  const ref = database.ref('inventario');
+
+  function createItem(item) {
+    ref.push(item);
+  }
+
+  // Este método debe llamarse pero ingresando la función getData desde el submodule Editar con el método addRow
+  function retrieveData(fnAddRow) {
+    // Read the docs for Firebase.on method. It needs a callback to handle/display the changes
+    // fnAddRow --> resumenArea.addRowItem.bind(resumenArea)
+    ref.on('value', fnAddRow, errData);
+  }
+
+  function deleteData(itemsCodeArr) {
+    // itemsCodeArr is an array with all the item's code the user selected to be deleted.
+    // With the code info we will match the item save in the database
+    ref.on('value', function (inventario) {
+      if (inventario.val()) {
+        const inventarioObj = inventario.val();
+        // ref.on returns the whole 'inventario' object
+        const itemKeyDB = Object.keys(inventarioObj); // Firebase asign a random unique key for each data object
+        for (let i = 0; i < itemsCodeArr.length; i++) {
+          // 'selectedItemCode' will refer to the product's code which input was checked by the user...
+          // regarding to the item to be deleted
+          const selectedItemCode = itemsCodeArr[i];
+          for (let j = 0; j < itemKeyDB.length; j++) {
+            const itemRefKey = itemKeyDB[j]; // This is the current child's key for the Firebase 'inventario' object
+            const itemCodeDB = inventarioObj[itemKeyDB[j]]['cod']; // Get the 'code' for the item saved in DB
+            if (selectedItemCode === itemCodeDB) {
+              const itemRow = database.ref('inventario/' + itemRefKey);
+              itemRow.remove();
+              // .then(function() {
+              //   console.log('Item was succesfully deleted');
+              // })
+              // .catch(function(error) {
+              //   console.log('Failure: ' + error);
+              // });
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function errData(err) {
+    console.log('Error is: ' + err);
+  }
+
+  return {
+    createItem: createItem,
+    retrieveData: retrieveData,
+    deleteData: deleteData
+  };
+}();
+/* harmony export (immutable) */ __webpack_exports__["a"] = DB;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const inventarioForm = function ProductForm() {
+  const inventarioFields = {
+    'Cod': true,
+    'Description': true,
+    'Cantidad': true,
+    'Precio U': true,
+    'Empaque': true,
+    'Moneda': false,
+    'Unidades x Empaque': false,
+    'Unidad de carga': true,
+    'Campo 1': false
+  };
+
+  function getFields() {
+    return inventarioFields;
+  }
+
+  function updateFields(columnName, value) {
+    inventarioFields[columnName] = value;
+  }
+
+  return {
+    getFields: getFields,
+    updateFields: updateFields
+  };
+}();
+/* harmony export (immutable) */ __webpack_exports__["a"] = inventarioForm;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return ORDER; });
 /* unused harmony export generarResumenPedido */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ingresarItem; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_Inventario__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__HTML__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_Calcular__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_Calcular__ = __webpack_require__(13);
 
 
 
@@ -330,7 +465,7 @@ function ingresarItem(item, qty) {
 
 
 /***/ }),
-/* 3 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -384,7 +519,7 @@ function Bar(id) {
 }
 
 /***/ }),
-/* 4 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -429,187 +564,108 @@ function Menu(location) {
 }
 
 /***/ }),
-/* 5 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = productModule;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__HTML__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_SubProductIngresar__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_SubProductEditar__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_SubProductEmpaques__ = __webpack_require__(11);
 
 
-function lunchFirebase() {
-  var config = {
-    apiKey: "AIzaSyBB-mhYGsm-1iF2Ksv2Y2wnAktGU0Fh-0I",
-    authDomain: "qbco-8373d.firebaseapp.com",
-    databaseURL: "https://qbco-8373d.firebaseio.com",
-    projectId: "qbco-8373d",
-    storageBucket: "qbco-8373d.appspot.com",
-    messagingSenderId: "568598711654"
-  };
-  firebase.initializeApp(config);
-  var database = firebase.database();
-  var ref = database.ref('inventario');
-  return {
-    createItem(item) {
-      ref.push(item);
-    }
-  };
-}
 
-// Initialize Firebase
-const inventarioDB = lunchFirebase();
 
-function ProductForm() {
-  const inventarioFields = {
-    'Cod': true,
-    'Description': true,
-    'Cantidad': true,
-    'Precio U': true,
-    'Empaque': false,
-    'Moneda': false,
-    'Unidades x Empaque': true,
-    'Unidad de carga': false,
-    'Campo 1': false
-  };
+// Editar y empaques tendrán un módulo para ser llamados.
+const submodule = {
+
+  ingresar: {
+    render: () => __WEBPACK_IMPORTED_MODULE_0_SubProductIngresar__["a" /* additionSubmodule */],
+    activedAlready: false
+  },
+
+  editar: {
+    render: () => __WEBPACK_IMPORTED_MODULE_1_SubProductEditar__["a" /* editionSubmodule */],
+    activedAlready: false
+  },
+
+  empaques: {
+    render: () => __WEBPACK_IMPORTED_MODULE_2_SubProductEmpaques__["a" /* empaqueSubmodule */],
+    activedAlready: false
+  }
+};
+
+const innerNavBar = function innerNavBar() {
+  const menuList = ['Ingresar', 'Editar', 'Empaques'];
 
   return {
-    getFields() {
-      return inventarioFields;
+
+    render: function render() {
+      return `<ul class="product-upper-submenu">
+            ${menuList.map(li => `<li><a href='#'> ${li} </a></li>`).join('')}
+          </ul>`;
     },
-    updateFields(columnName, value) {
-      inventarioFields[columnName] = value;
+
+    addClickEvent: function addClickEvent() {
+      const nodeListMenu = Array.from(document.querySelectorAll('.product-upper-submenu a'));
+      nodeListMenu.map(li => {
+        li.addEventListener('click', function () {
+          const subModuleName = li.innerText.toLowerCase();
+          controller.displaySubModule(subModuleName);
+        });
+      });
     }
   };
-}
+}();
 
 const view = {
   init: function init(id) {
     const module = document.getElementById(id);
     const productModule = document.createElement('div');
-    productModule.innerHTML = `<div id="productos-module">
+    productModule.setAttribute('id', 'productos-module');
+    productModule.innerHTML = `<div class="product-wrapper">
         <div> 
-          <ul class="product-upper-submenu">
-            <li>Ingresar</li>
-            <li>Editar</li>
-            <li>Empaques</li>
-          </ul>
+          ${innerNavBar.render()}
         </div>
         <div id="product-lower-section">
           <div id="product-content">
-            <div id="open-hidden-box">
-              <ul><li> Columns </li></ul>
-            </div>
-            <div id="productInputSection"> </div>
-            <div id="box-product-columns" class="column-box hidden-box">
-            </div>
           </div>
         </div>
       </div>`;
     module.appendChild(productModule);
+    innerNavBar.addClickEvent();
   },
-
-  inputSection: function inputSection(fields) {
-    const headerContent = document.getElementById('productInputSection');
-    for (var i = 0; i < 2; i++) {
-      let row = document.createElement('div');
-      row.setAttribute('class', 'row-product');
-      let cells = "";
-      for (const header in fields) {
-        if (fields[header]) {
-          // First the header (0), then (1) the input fields
-          const prop = header.split(' ').join('').toLowerCase();
-          if (i === 0) cells += `<div class="cell-product">${header}</div>`;else cells += `<input data-prop=${prop} class='cell-product'>`;
-        }
-      }
-      row.innerHTML = cells;
-      const button = document.createElement('button');
-      button.setAttribute('id', 'create-product');
-      i === 1 ? row.appendChild(button) : null;
-      headerContent.appendChild(row);
-    }
+  displaySubmodule: function displaySubmodule(submoduleObj) {
+    const div = document.getElementById('product-content');
+    div.appendChild(submoduleObj.init());
+    submoduleObj.load();
+    // view.toggleView();
   },
-
-  hiddenColumnBox: function hiddenColumnBox(fieldColumns) {
-    const divColumnBox = document.getElementById('box-product-columns');
-    function fieldSet(objList) {
-      const listArray = Object.keys(objList);
-      return `<fieldset class='box-checklist'>
-        <legend>Escoger campos:</legend>
-          ${listArray.map(columnName => {
-        return `<div>
-                      <input 
-                        type="checkbox" 
-                        name="column-option" 
-                        value=${columnName} 
-                        ${objList[columnName] ? 'checked' : null}>
-                      <label>${columnName}</label>
-                    </div>`;
-      }).join('')}
-        </fieldset>`;
-    }
-
-    const innerDiv = `${fieldSet(fieldColumns)}
-                      <div>
-                        <div> Hecho </div> 
-                        <div> Restablecer </div>
-                      </div>`;
-
-    divColumnBox.innerHTML = innerDiv;
-  },
-
-  showColumnOptions: function () {
-    const liColumns = document.getElementById('open-hidden-box');
-    liColumns.addEventListener('click', function () {
-      const boxWithFieldList = document.getElementById('box-product-columns');
-      boxWithFieldList.classList.toggle('hidden-box');
-    });
-  },
-
-  update: function (form) {
-    const checkBoxState = Array.from(document.querySelectorAll('input[type="checkbox"]'));
-    checkBoxState.forEach(function (col) {
-      col.addEventListener('click', function () {
-        const columnTitle = col.nextElementSibling.textContent;
-        form.updateFields(columnTitle, col.checked);
-        const menu = document.getElementById('productInputSection');
-        menu.innerHTML = '';
-        view.inputSection(form.getFields());
-        controller.onClickCreateBtn();
-      });
+  toggleView: function toggleView(moduleSelected) {
+    const moduleNodes = Array.from(document.querySelectorAll('#product-content > div'));
+    moduleNodes.map(module => {
+      module.id === moduleSelected ? module.style.display = 'flex' : module.style.display = 'none';
     });
   }
-  // End of view
 };
 
 const controller = {
 
   init: function init(id) {
     view.init(id);
-    controller.loadPage();
   },
 
-  loadPage: function loadPage() {
-    const form = ProductForm();
-    view.inputSection(form.getFields());
-    view.hiddenColumnBox(form.getFields());
-    view.showColumnOptions();
-    view.update(form);
-  },
-
-  onClickCreateBtn: function () {
-    const createBtn = document.getElementById('create-product');
-    createBtn.addEventListener('click', function () {
-      const data = Array.from(document.querySelectorAll('#productInputSection input'));
-      const item = {};
-      data.map(col => {
-        const prop = col.dataset.prop;
-        const value = col.value;
-        item[prop] = value;
-      });
-      inventarioDB.createItem(item);
-    });
+  displaySubModule: function displaySubModule(name) {
+    const submoduleObj = submodule[name].render();
+    if (!submodule[name].activedAlready) {
+      view.displaySubmodule(submoduleObj);
+      view.toggleView(submoduleObj.init().id);
+      submodule[name].activedAlready = true;
+    } else {
+      view.toggleView(submoduleObj.init().id);
+    }
   }
-  // End of controller
+
 };
 
 function productModule(indexLocation) {
@@ -617,13 +673,13 @@ function productModule(indexLocation) {
 }
 
 /***/ }),
-/* 6 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["a"] = Qbco;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__HTML__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ResumenPedido__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ResumenPedido__ = __webpack_require__(5);
 
 
 
@@ -659,15 +715,353 @@ function Qbco(location) {
 }
 
 /***/ }),
-/* 7 */
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_SubmoduleConstructor__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_InventarioForm__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_Database__ = __webpack_require__(3);
+
+
+
+
+class MainHandleForm {
+    constructor(id) {
+        this.upper_control = document.createElement('div');
+        this.upper_control.setAttribute('id', id);
+        this.upper_control.setAttribute('class', 'inventarioMainHandleForm');
+    }
+
+    render() {
+        const searchDiv = document.createElement('div');
+        const innerContent = `<div> <input type='search'></input>
+                              <a href="#"><i class="fa fa-search fa-lg" aria-hidden="true"></i> </a> </div>`;
+        searchDiv.innerHTML = innerContent;
+        this.upper_control.appendChild(searchDiv);
+        this.upper_control.appendChild(this.deleteBtn());
+        return this.upper_control;
+    }
+    deleteBtn() {
+        const deleteBtn = document.createElement('div');
+        deleteBtn.setAttribute('id', 'delete-icon');
+        deleteBtn.style.display = "none";
+        deleteBtn.innerHTML = `<a href="#"> <i class="fa fa-trash-o fa-lg" aria-hidden="true"> </i> </a>`;
+        deleteBtn.addEventListener('click', function () {
+            const rowItemList = Array.from(document.querySelectorAll('.input-space > input[type="checkbox"]'));
+            let itemsCode = rowItemList.reduce(function (arr, rowItem) {
+                if (rowItem.checked) {
+                    arr.push(rowItem.parentElement.nextSibling.innerText);
+                }
+                return arr;
+            }, []);
+            console.log(itemsCode);
+            console.log(rowItemList);
+            __WEBPACK_IMPORTED_MODULE_2_Database__["a" /* DB */].deleteData(itemsCode);
+            const itemRows = Array.from(document.querySelectorAll('div.input-space > input'));
+            const itemSelected = itemRows.some(item => item.checked);
+            itemSelected ? deleteBtn.style.display = "flex" : deleteBtn.style.display = "none";
+        });
+        return deleteBtn;
+    }
+}
+
+class ResumenArea {
+    constructor(id, headerColumns) {
+        this.headerColumns = headerColumns;
+        this.resumenArea = document.createElement('div');
+        this.resumenArea.setAttribute('id', id);
+    }
+
+    render() {
+        this.append(this.setHeader());
+        return this.resumenArea;
+    }
+    append(node) {
+        this.resumenArea.appendChild(node);
+    }
+    // En parametro debe ir el object del item no de inventario.getFields() pues éste debe er permanente cuando se...
+    // instancia la clase
+    createRow() {
+        const showDeleteBtn = this.showDeleteBtn.bind(this); // bind ResumenArea object with the method showDeleteBtn
+        const row = document.createElement('div');
+        row.setAttribute('class', 'row-pr-sub-ed');
+        const divInput = document.createElement('div');
+        divInput.setAttribute('class', 'input-space');
+        const input = document.createElement('input');
+        input.addEventListener('change', showDeleteBtn); // showDeleteBtn refers to add 'delete' and 'edit' icons
+        input.setAttribute('type', 'checkbox');
+        divInput.appendChild(input);
+        row.appendChild(divInput);
+        return row;
+    }
+
+    setHeader() {
+        const headerRow = document.createElement('div');
+        headerRow.setAttribute('class', 'row-pr-sub-ed');
+        const divInput = document.createElement('div');
+        divInput.setAttribute('class', 'input-space');
+        divInput.innerHTML = `<i class="fa fa-check" aria-hidden="true"></i>`;
+        headerRow.appendChild(divInput);
+        // const headerRow = this.createRow();
+        for (const columnName in this.headerColumns) {
+            const headerCell = document.createElement('div');
+            headerCell.setAttribute('class', 'cell-pr-sub-ed');
+            headerCell.setAttribute('dataset', `headerCell${columnName}`);
+            headerCell.innerHTML = columnName;
+            headerRow.appendChild(headerCell);
+        }
+        return headerRow;
+    }
+    // Maybe this method should be called showItemsData instead
+    addRowItem(itemsData) {
+        this.resumenArea.innerHTML = "";
+        this.append(this.setHeader());
+        // itemsData is the whole object returned from Firebase Database, it has several methods
+        // To retrieve the specific reference use: .val() method. 
+        const items = itemsData.val(); // inventario reference in Firebase database, it's an object
+        for (const item in items) {
+            const rowItem = this.createRow();
+            for (const columnName in this.headerColumns) {
+                const prop = columnName.split(' ').join('').toLowerCase();
+                const headerCell = document.createElement('div');
+                headerCell.setAttribute('class', 'cell-pr-sub-ed');
+                headerCell.setAttribute('dataset', `headerCell${columnName}`);
+                const propItemValue = items[item][prop] === undefined ? '-' : items[item][prop];
+                headerCell.innerHTML = propItemValue;
+                rowItem.appendChild(headerCell);
+            }
+            this.resumenArea.appendChild(rowItem);
+        }
+    }
+
+    showDeleteBtn() {
+        const itemRows = Array.from(document.querySelectorAll('div.input-space > input'));
+        const itemSelected = itemRows.some(item => item.checked);
+        const deleteIcon = document.getElementById('delete-icon');
+        itemSelected ? deleteIcon.style.display = "flex" : deleteIcon.style.display = "none";
+    }
+}
+
+// Instanciar la clase con el nombre del 'id' para el Node y como segundo parámetro 'inventarioForm.getFields()'
+const upperControl = new MainHandleForm('upperControlManejoInventario');
+const resumenArea = new ResumenArea('editarSubmodule-resume-container', __WEBPACK_IMPORTED_MODULE_1_InventarioForm__["a" /* inventarioForm */].getFields());
+
+const view = {
+
+    init: function init() {
+        const container = document.createElement('div');
+        container.setAttribute('id', 'manejoInventarioContainer');
+        container.setAttribute('class', 'submodule-container');
+        container.appendChild(upperControl.render());
+        container.appendChild(resumenArea.render());
+        // Firebase method ref.on needs a function to call when a change is detected
+        // ResumenArea object needs to be binded so Firebase knows what 'this' is.
+        // Firebase ref.on method handle the changes. This method in inside a DB.retrieveData built function...
+        // See ref.on('value', fnAddRow, errData).
+        // fnAddRow --> is a callback represent here by resumenArea.addRowItem.bind(resumenArea)
+        __WEBPACK_IMPORTED_MODULE_2_Database__["a" /* DB */].retrieveData(resumenArea.addRowItem.bind(resumenArea));
+        return container;
+    }
+};
+
+const dataModel = {};
+
+const controller = {
+    init: function init() {
+        return view.init();
+    },
+    loadPage: function loadPage() {}
+};
+
+const editionSubmodule = new __WEBPACK_IMPORTED_MODULE_0_SubmoduleConstructor__["a" /* inventarioSubmodule */](controller, 'manejoInventarioSubmodule');
+/* harmony export (immutable) */ __webpack_exports__["a"] = editionSubmodule;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_SubmoduleConstructor__ = __webpack_require__(2);
+
+
+const view = {
+
+    init: function init() {
+        const container = document.createElement('div');
+        container.setAttribute('id', 'empaqueInventarioContainer');
+        container.setAttribute('class', 'submodule-container');
+        container.innerHTML = "Submodule empaques";
+        return container;
+    }
+};
+
+const controller = {
+    init: function init() {
+        return view.init();
+    },
+    loadPage: function loadPage() {}
+};
+
+const empaqueSubmodule = new __WEBPACK_IMPORTED_MODULE_0_SubmoduleConstructor__["a" /* inventarioSubmodule */](controller, 'empaqueInventarioSubmodule');
+/* harmony export (immutable) */ __webpack_exports__["a"] = empaqueSubmodule;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_Database__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_SubmoduleConstructor__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_InventarioForm__ = __webpack_require__(4);
+
+
+
+
+const view = {
+  init: function init() {
+    const container = document.createElement('div');
+    container.setAttribute('id', 'ingresar-content');
+    const divColumn = document.createElement('div');
+    divColumn.setAttribute('id', 'open-hidden-box');
+    divColumn.innerHTML = `<ul><li> <a href="#"><i class="fa fa-pencil-square-o fa-lg" aria-hidden="true"></i></a> </li></ul>`;
+    container.appendChild(divColumn);
+    // Area for inputSection:
+    const inputSectionArea = document.createElement('div');
+    inputSectionArea.setAttribute('id', 'inputSectionArea');
+    inputSectionArea.appendChild(this.inputSection(__WEBPACK_IMPORTED_MODULE_2_InventarioForm__["a" /* inventarioForm */].getFields()));
+    container.appendChild(inputSectionArea);
+    container.appendChild(this.hiddenColumnBox(__WEBPACK_IMPORTED_MODULE_2_InventarioForm__["a" /* inventarioForm */].getFields()));
+    return container;
+  },
+
+  inputSection: function inputSection(fields) {
+    const headerContent = document.createElement('div');
+    headerContent.setAttribute('id', 'productInputSection');
+    // const headerContent = document.getElementById('productInputSection');
+    for (var i = 0; i < 2; i++) {
+      let row = document.createElement('div');
+      row.setAttribute('class', 'row-product');
+      let cells = "";
+      for (const header in fields) {
+        if (fields[header]) {
+          // First the header (0), then (1) the input fields
+          const prop = header.split(' ').join('').toLowerCase();
+          if (i === 0) cells += `<div class="cell-product">${header}</div>`;else cells += `<input data-prop=${prop} class='cell-product'>`;
+        }
+      }
+      row.innerHTML = cells;
+      const button = document.createElement('button');
+      button.setAttribute('id', 'create-product');
+      i === 1 ? row.appendChild(button) : null;
+      headerContent.appendChild(row);
+    }
+    return headerContent;
+  },
+
+  hiddenColumnBox: function hiddenColumnBox(fieldColumns) {
+    const hiddenCheckboxes = document.createElement('div');
+    hiddenCheckboxes.setAttribute('id', 'box-product-columns');
+    hiddenCheckboxes.setAttribute('class', 'column-box hidden-box');
+
+    function fieldSet(objList) {
+      const listArray = Object.keys(objList);
+      return `<fieldset class='box-checklist'>
+        <legend>Escoger campos:</legend>
+          ${listArray.map(columnName => {
+        return `<div>
+                      <input 
+                        type="checkbox" 
+                        name="column-option" 
+                        value=${columnName} 
+                        ${objList[columnName] ? 'checked' : null}>
+                      <label>${columnName}</label>
+                    </div>`;
+      }).join('')}
+        </fieldset>`;
+    }
+    const doneBtn = document.createElement('div');
+    doneBtn.innerHTML = `<div><a href="#" class="button submit"> Hecho </a></div>`;
+    doneBtn.addEventListener('click', function () {
+      hiddenCheckboxes.classList.toggle('hidden-box');
+    });
+    hiddenCheckboxes.innerHTML = `${fieldSet(fieldColumns)}`;
+    hiddenCheckboxes.appendChild(doneBtn);
+    return hiddenCheckboxes;
+  },
+
+  showColumnOptions: function showColumnOptions() {
+    const liColumns = document.getElementById('open-hidden-box');
+    liColumns.addEventListener('click', function () {
+      const boxWithFieldList = document.getElementById('box-product-columns');
+      boxWithFieldList.classList.toggle('hidden-box');
+    });
+  },
+
+  update: function update(form) {
+    const checkBoxState = Array.from(document.querySelectorAll('#box-product-columns input[type="checkbox"]'));
+    checkBoxState.forEach(function (col) {
+      col.addEventListener('click', function () {
+        const columnTitle = col.nextElementSibling.textContent;
+        form.updateFields(columnTitle, col.checked);
+        const inputSectionArea = document.getElementById('inputSectionArea');
+        inputSectionArea.innerHTML = '';
+        inputSectionArea.appendChild(view.inputSection(form.getFields()));
+        controller.ingresar();
+      });
+    });
+  }
+  // End of view
+};
+
+const controller = {
+
+  init: function init() {
+    return view.init();
+  },
+
+  loadPage: function loadPage() {
+    view.showColumnOptions();
+    view.update(__WEBPACK_IMPORTED_MODULE_2_InventarioForm__["a" /* inventarioForm */]);
+    this.ingresar();
+  },
+
+  ingresar: function ingresar() {
+    const createBtn = document.getElementById('create-product');
+    createBtn.addEventListener('click', function () {
+      const creationDate = new Date();
+      const data = Array.from(document.querySelectorAll('#productInputSection input'));
+      const item = {};
+      data.map(col => {
+        const prop = col.dataset.prop;
+        const value = col.value;
+        item[prop] = value;
+      });
+      item["creationDate1"] = Date.parse(creationDate);
+      __WEBPACK_IMPORTED_MODULE_0_Database__["a" /* DB */].createItem(item);
+      console.log(creationDate);
+      console.log(item);
+    });
+  }
+  // End of controller
+};
+
+const additionSubmodule = new __WEBPACK_IMPORTED_MODULE_1_SubmoduleConstructor__["a" /* inventarioSubmodule */](controller, 'ingresoInventarioSubmodule');
+/* harmony export (immutable) */ __webpack_exports__["a"] = additionSubmodule;
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return calcularPallets; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_Inventario__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_HandleOrder__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_HandleOrder__ = __webpack_require__(14);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__HTML__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ResumenPedido__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ResumenPedido__ = __webpack_require__(5);
 
 
 
@@ -723,7 +1117,7 @@ function calcularPallets() {
 
 
 /***/ }),
-/* 8 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -791,16 +1185,16 @@ function createItem(presentation) {
 }
 
 /***/ }),
-/* 9 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__HTML__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_Menu__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_Qbco__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_Product__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_Bar__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_Menu__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_Qbco__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_Product__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_Bar__ = __webpack_require__(6);
 
 
 
